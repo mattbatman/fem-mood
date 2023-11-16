@@ -24,7 +24,11 @@ const EntryPage = async ({ params }) => {
       <div className="col-span-2">
         <Editor entry={entry} />
       </div>
-      <div className="border-l border-black/10">ai stuff</div>
+      <div className="border-l border-black/10">
+        <div className="bg-blue-300 px-6 py-10">
+          <h2>Analysis</h2>
+        </div>
+      </div>
     </div>
   )
 }
