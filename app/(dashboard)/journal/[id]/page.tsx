@@ -20,8 +20,11 @@ const EntryPage = async ({ params }) => {
   const entry = await getEntry(params.id)
 
   return (
-    <div className="h-full w-full">
-      <Editor entry={entry} />
+    <div className="h-full w-full grid gid-cols-3">
+      <div className="col-span-2">
+        <Editor entry={entry} />
+      </div>
+      <div className="border-l border-black/10">ai stuff</div>
     </div>
   )
 }
