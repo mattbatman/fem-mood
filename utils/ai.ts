@@ -24,6 +24,7 @@ const parser = StructuredOutputParser.fromZodSchema(
       .describe(
         'sentiment of the text and rated on a scale from -10 to 10, where -10 is extremely negative, 0 is neutral, and 10 is extremely positive.'
       ),
+    subject: z.string().describe('the subject of the journal entry.'),
   })
 )
 
