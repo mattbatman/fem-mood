@@ -1,7 +1,14 @@
 import { OpenAI } from 'langchain/llms/openai'
-import { StructuredOutputParser } from 'langchain/output_parsers'
+import {
+  StructuredOutputParser,
+  OutputFixingParser,
+} from 'langchain/output_parsers'
 import z from 'zod'
 import { PromptTemplate } from 'langchain/prompts'
+import { Document } from 'langchain/document'
+import { loadQARefineChain } from 'langchain/chains'
+import { MemoryVectorStore } from 'langchain/vectorstores/memory'
+import { OpenAIEmbeddings } from 'langchain/embeddings/openai'
 
 const parser = StructuredOutputParser.fromZodSchema(
   z.object({
@@ -57,4 +64,35 @@ export const analyze = async (content) => {
   }
 }
 
-const qa = async () => {}
+/*
+ * We want to turn everything into a langchain document.
+ * Create a chain.
+ * Create embeddings (groups of vectors)
+ * Store in vector database
+ * Perform similarity search
+ * Send to AI
+ * */
+export const qa = async (question, entries) => {
+  const docs = entries.map((entry) => {
+    return new Document({
+      pageContent: entry.content,
+      metadata: { id: entry.id, createdAt: entry.createdAt },
+    })
+  })
+
+  const model = new OpenAI({ temperature: 0, modelName: 'gpt-3.5-turbo' })
+
+  const chain = loadQARefineChain(model)
+
+  const embeddings = new OpenAIEmbeddings()
+
+  const store = await MemoryVectorStore.fromDocuments(docs, embeddings)
+  const relevantDocs = await store.similaritySearch(question)
+
+  const res = await chain.call({
+    input_docs: relevantDocs,
+    question,
+  })
+
+  return res.output_text
+}
