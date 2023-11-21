@@ -56,3 +56,5 @@ export const analyze = async (content) => {
     console.log(e)
   }
 }
+
+const qa = async () => {}
