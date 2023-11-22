@@ -90,7 +90,7 @@ export const qa = async (question, entries) => {
   const relevantDocs = await store.similaritySearch(question)
 
   const res = await chain.call({
-    input_docs: relevantDocs,
+    input_documents: relevantDocs,
     question,
   })
 
